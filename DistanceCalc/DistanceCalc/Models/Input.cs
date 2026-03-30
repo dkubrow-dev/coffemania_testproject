@@ -4,6 +4,7 @@
 /// Структура входных данных для подсчёта расстояний
 /// </summary>
 /// <remarks>Служит для получения стандартизированного входа</remarks>
+[Serializable]
 public struct Input
 {
     /// <summary>

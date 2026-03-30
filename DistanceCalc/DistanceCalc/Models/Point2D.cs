@@ -4,6 +4,7 @@
 /// Точка двухмерного пространства для определения положения
 /// </summary>
 /// <remarks>Не наследуемый</remarks>
+[Serializable]
 public sealed class Point2D
 {
     /// <summary>

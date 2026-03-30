@@ -1,0 +1,6 @@
+@DistanceWebApi_HostAddress = http://localhost:5117
+
+GET {{DistanceWebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
