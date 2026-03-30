@@ -9,7 +9,7 @@
             Контроллер, определяющий путь до точек
             </summary>
         </member>
-        <member name="F:DistanceWebApi.Controllers.DistanceController.calculator">
+        <member name="F:DistanceWebApi.Controllers.DistanceController._calculator">
             <summary>
             Сервис расчётов дистанции.
             </summary>
@@ -23,7 +23,6 @@
         <member name="M:DistanceWebApi.Controllers.DistanceController.Calculate(DistanceCalc.Models.Input,System.Threading.CancellationToken)">
             <summary>
             Рассчитывает путь от переданных точек A и B. Возвращает расстояние в километрах.
-            Ожидаемое время выполнения: 1 500 миллисекунды (искуственной задержки) + само время расчёта
             </summary>
             <param name="input">Входные данные для расчёта расстояния</param>
             <param name="cancellationToken">Токен отмены выполнения</param>
@@ -35,29 +34,29 @@
             Distance - рассчитанное расстояние, если оно было посчитано.
             </returns>
         </member>
-        <member name="T:Program">
-            <summary>
-            Auto-generated public partial Program class for top-level statement apps.
-            </summary>
-        </member>
-        <member name="T:DistanceCalc.Services.CalculatorSettingsProvider">
+        <member name="T:DistanceWebApi.Services.CalculatorSettingsProvider">
             <summary>
             Настройки сервиса для калькулятора.
             </summary>
         </member>
-        <member name="F:DistanceCalc.Services.CalculatorSettingsProvider.SectionName">
+        <member name="F:DistanceWebApi.Services.CalculatorSettingsProvider.SectionName">
             <summary>
             Имя секции в настройках appsettings.json
             </summary>
         </member>
-        <member name="P:DistanceCalc.Services.CalculatorSettingsProvider.Mode">
+        <member name="P:DistanceWebApi.Services.CalculatorSettingsProvider.Mode">
             <summary>
             Режим, определяющий фактического исполнителя для расчёта растояния
             </summary>
         </member>
-        <member name="P:DistanceCalc.Services.CalculatorSettingsProvider.SimulateDelayMs">
+        <member name="P:DistanceWebApi.Services.CalculatorSettingsProvider.SimulateDelayMs">
             <summary>
             Симуляция задержки для калькулятора
+            </summary>
+        </member>
+        <member name="T:Program">
+            <summary>
+            Auto-generated public partial Program class for top-level statement apps.
             </summary>
         </member>
         <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Type)">

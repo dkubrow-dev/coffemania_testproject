@@ -1,7 +1,7 @@
 using DistanceCalc.Abstractions;
 using DistanceCalc.Services;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Hosting;
+using DistanceWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

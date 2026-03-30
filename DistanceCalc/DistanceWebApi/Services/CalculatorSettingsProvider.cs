@@ -1,7 +1,7 @@
 ﻿using DistanceCalc.Abstractions;
 using DistanceCalc.Models;
 
-namespace DistanceCalc.Services;
+namespace DistanceWebApi.Services;
 
 /// <summary>
 /// Настройки сервиса для калькулятора.

@@ -147,6 +147,12 @@
             <param name="x">Абсциса</param>
             <param name="y">Ордината</param>
         </member>
+        <member name="P:DistanceCalc.Models.Point2D.x">
+            <summary>Абсциса</summary>
+        </member>
+        <member name="P:DistanceCalc.Models.Point2D.y">
+            <summary>Ордината</summary>
+        </member>
         <member name="P:DistanceCalc.Models.Point2D.X">
             <summary>
             Координата по оси oX

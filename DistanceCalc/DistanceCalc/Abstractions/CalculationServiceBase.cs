@@ -49,12 +49,12 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
         }
         catch (Exception ex)
         {
-            return await Task.FromResult(new Result
+            return new Result
             {
                 Success = false,
                 ErrorCode = ErrorCodes.InternalException,
                 Message = ex.Message
-            });
+            };
         }
     }
 

@@ -14,7 +14,7 @@ public class DistanceController : ControllerBase
     /// <summary>
     /// Сервис расчётов дистанции.
     /// </summary>
-    private IDistanceCalculationService calculator;
+    private readonly IDistanceCalculationService _calculator;
 
     /// <summary>
     /// Возвращает контроллер определения пути
@@ -22,12 +22,11 @@ public class DistanceController : ControllerBase
     /// <param name="calculator"></param>
     public DistanceController(IDistanceCalculationService calculator)
     {
-        this.calculator = calculator;
+        this._calculator = calculator;
     }
 
     /// <summary>
     /// Рассчитывает путь от переданных точек A и B. Возвращает расстояние в километрах.
-    /// Ожидаемое время выполнения: 1 500 миллисекунды (искуственной задержки) + само время расчёта
     /// </summary>
     /// <param name="input">Входные данные для расчёта расстояния</param>
     /// <param name="cancellationToken">Токен отмены выполнения</param>
@@ -46,7 +45,7 @@ public class DistanceController : ControllerBase
     {
         try
         {
-            var result = await calculator.CalculateAsync(input, cancellationToken);
+            var result = await _calculator.CalculateAsync(input, cancellationToken);
             if (result.Success == false)
             {
                 if (result.ErrorCode == ErrorCodes.Canceled)

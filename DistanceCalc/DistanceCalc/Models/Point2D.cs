@@ -11,17 +11,17 @@
 /// <param name="x">Абсциса</param>
 /// <param name="y">Ордината</param>
 [Serializable]
-public sealed class Point2D(double x = default, double y = default)
+public sealed record Point2D(double x = default, double y = default)
 {
     /// <summary>
     /// Координата по оси oX
     /// </summary>
-    public double X { get; set; } = x;
+    public double X { get; init; } = x;
 
     /// <summary>
     /// Координата по оси oY
     /// </summary>
-    public double Y { get; set; } = y;
+    public double Y { get; init; } = y;
 
     /// <summary>
     /// Возвращает результат математического сложения точек (вектора)

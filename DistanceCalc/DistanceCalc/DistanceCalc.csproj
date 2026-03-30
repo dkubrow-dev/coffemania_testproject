@@ -6,8 +6,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<DocumentationFile>xml-summary\distanceCalc.xml</DocumentationFile>
-		<Title>DistanceCalk</Title>
+		<DocumentationFile>$(MSBuildProjectDirectory)\xml-summary\distanceCalc.xml</DocumentationFile>
+		<Title>DistanceCalc</Title>
 		<Description>Калькулятор расстояния между двумя точками</Description>
 	</PropertyGroup>
 

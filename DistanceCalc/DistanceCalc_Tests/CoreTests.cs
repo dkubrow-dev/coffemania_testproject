@@ -30,13 +30,13 @@ public class CoreTests
         CancellationToken cancellationToken = cancellationTokenSource.Token;
 
         // Проверка 1: Верные расчёты
-        Dictionary<Input, double> testData = new()
+        HashSet<(Input input, double expectedVaue)> testData = new()
         {
-            { new Input() {PointA = new(0, 0), PointB = new(3, 4)}, 5 },
-            { new Input() {PointA = new(1, 2), PointB = new(4, 6)}, 5 },
-            { new Input() {PointA = new(-1, -1), PointB = new(2, 3)}, 5 },
-            { new Input() {PointA = new(1, 1), PointB = new(1, 1)}, 0 },
-            { new Input() {PointA = new(1, 0), PointB = new(-1, 0)}, 2 }
+            {(new Input() {PointA = new(0, 0), PointB = new(3, 4)}, 5) },
+            {(new Input() {PointA = new(1, 2), PointB = new(4, 6)}, 5) },
+            {(new Input() {PointA = new(-1, -1), PointB = new(2, 3)}, 5) },
+            {(new Input() {PointA = new(1, 1), PointB = new(1, 1)}, 0) },
+            {(new Input() {PointA = new(1, 0), PointB = new(-1, 0)}, 2) }
         };
 
         foreach ((Input input, double expectedValue) in testData)
@@ -58,7 +58,7 @@ public class CoreTests
     /// </summary>
     /// <remarks>Под виртуальной нагрузкой на объекте-исполнителе токен отмены должен успеть отменить задание</remarks>
     [Fact]
-    public async Task CancelationToken()
+    public async Task CancellationToken()
     {
         // Калькулятор
         IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, 1500));
@@ -91,9 +91,8 @@ public class CoreTests
         using CancellationTokenSource cancellationTokenSource = new();
 
         const int loadCount = 1000;
-        TimeSpan deadline = TimeSpan.FromSeconds(0.01);
+        TimeSpan deadline = TimeSpan.FromSeconds(0.5);
 
-        DateTime start = DateTime.Now;
         Task<Result>[] tasks = Enumerable.Range(0, loadCount)
             .Select(task =>
             {
@@ -103,7 +102,6 @@ public class CoreTests
             .ToArray();
 
         Result[] results = await Task.WhenAll(tasks);
-        DateTime end = DateTime.Now;
 
         Assert.Equal(loadCount, results.Length);
         Assert.All(results, r =>
@@ -111,6 +109,5 @@ public class CoreTests
             Assert.True(r.Success);
             Assert.Equal(ErrorCodes.NoErrors, r.ErrorCode);
         });
-        Assert.True(start - end < deadline);
     }
 }

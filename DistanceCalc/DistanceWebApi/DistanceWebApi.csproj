@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>xml-summary\distanceCalc-WebApi.xml</DocumentationFile>
+	  <DocumentationFile>$(MSBuildProjectDirectory)\xml-summary\distanceCalc-WebApi.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,17 +19,18 @@
     <ProjectReference Include="..\DistanceCalc\DistanceCalc.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="xml-summary\distanceCalc-WebApi.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="xml-summary\distanceCalc.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <Target Name="CopySiblingXmlDocs" AfterTargets="Build">
-  	<Copy SourceFiles="$(SolutionDir)DistanceCalc\xml-summary\distanceCalc.xml" DestinationFolder="$(SolutionDir)DistanceWebApi\xml-summary" Condition="Exists('$(SolutionDir)DistanceCalc\xml-summary\distanceCalc.xml')" />
+  	<MakeDir Directories="$(OutDir)xml-summary" />
+  
+  	<Copy
+  	  SourceFiles="$(MSBuildProjectDirectory)\..\DistanceCalc\xml-summary\distanceCalc.xml"
+  	  DestinationFiles="$(OutDir)xml-summary\distanceCalc.xml"
+  	  Condition="Exists('$(MSBuildProjectDirectory)\..\DistanceCalc\xml-summary\distanceCalc.xml')" />
+  
+  	<Copy
+  	  SourceFiles="$(MSBuildProjectDirectory)\xml-summary\distanceCalc-WebApi.xml"
+  	  DestinationFiles="$(OutDir)xml-summary\distanceCalc-WebApi.xml"
+  	  Condition="Exists('$(MSBuildProjectDirectory)\xml-summary\distanceCalc-WebApi.xml')" />
   </Target>
 
 </Project>
