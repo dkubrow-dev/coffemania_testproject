@@ -7,7 +7,7 @@ namespace DistanceCalc_Tests;
 /// <summary>
 /// Относительно простенький ILogger для того, чтобы можно было почитать логи после прогона тестов
 /// </summary>
-internal sealed class TestFileLogger : ILogger
+internal sealed class TestsLogger : ILogger
 {
     /// <summary>
     /// Имя категории логгирования
@@ -36,7 +36,7 @@ internal sealed class TestFileLogger : ILogger
     /// <param name="filePath">Путь к файлу логов</param>
     /// <param name="sync">Объект блокировки для потоков</param>
     /// <param name="output">Объект вывода лога в окно тестов</param>
-    public TestFileLogger(string categoryName, string filePath, object sync, ITestOutputHelper? output)
+    public TestsLogger(string categoryName, string filePath, object sync, ITestOutputHelper? output)
     {
         _categoryName = categoryName;
         _filePath = filePath;
@@ -110,7 +110,7 @@ internal sealed class TestFileLogger : ILogger
 /// <summary>
 /// Фабрика для тестового логгера
 /// </summary>
-internal sealed class TestFileLoggerFactory : ILoggerFactory
+internal sealed class TestsLoggerFactory : ILoggerFactory
 {
     /// <summary>
     /// Путь к файлу лога
@@ -122,6 +122,9 @@ internal sealed class TestFileLoggerFactory : ILoggerFactory
     /// </summary>
     private readonly object _sync = new();
 
+    /// <summary>
+    /// Объект вывода сообщений в окно результатов теста xUnit.
+    /// </summary>
     private readonly ITestOutputHelper? _output;
 
     /// <summary>
@@ -129,7 +132,7 @@ internal sealed class TestFileLoggerFactory : ILoggerFactory
     /// </summary>
     /// <param name="filePath">Путь к файлу логов</param>
     /// <param name="output">объект вывода в окно тестов</param>
-    public TestFileLoggerFactory(string filePath, ITestOutputHelper? output = null)
+    public TestsLoggerFactory(string filePath, ITestOutputHelper? output = null)
     {
         _filePath = filePath;
 
@@ -150,7 +153,7 @@ internal sealed class TestFileLoggerFactory : ILoggerFactory
     /// <param name="categoryName">Название категории логгера</param>
     /// <returns>Логгер для тестов</returns>
     public ILogger CreateLogger(string categoryName) =>
-        new TestFileLogger(categoryName, _filePath, _sync, _output);
+        new TestsLogger(categoryName, _filePath, _sync, _output);
 
     // высвобождать нечего
     public void Dispose() { }

@@ -4,24 +4,30 @@
 /// Точка двухмерного пространства для определения положения
 /// </summary>
 /// <remarks>Не наследуемый</remarks>
-/// <remarks>
-/// Возвращает новую точку пространства по заданным координатам.
-/// </remarks>
 /// <remarks>При отсутствии координат вернёт точку (0, 0)</remarks>
-/// <param name="x">Абсциса</param>
-/// <param name="y">Ордината</param>
 [Serializable]
-public sealed record Point2D(double x = default, double y = default)
+public sealed record Point2D
 {
+    /// <summary>
+    /// Возвращает новую точку пространства по заданным координатам.
+    /// </summary>
+    /// <param name="x">Абсциса</param>
+    /// <param name="y">Ордината</param>
+    public Point2D(double x = default, double y = default)
+    {
+        X = x;
+        Y = y;
+    }
+
     /// <summary>
     /// Координата по оси oX
     /// </summary>
-    public double X { get; init; } = x;
+    public double X { get; init; }
 
     /// <summary>
     /// Координата по оси oY
     /// </summary>
-    public double Y { get; init; } = y;
+    public double Y { get; init; }
 
     /// <summary>
     /// Возвращает результат математического сложения точек (вектора)

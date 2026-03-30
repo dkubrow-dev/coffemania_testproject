@@ -17,12 +17,20 @@ public class DistanceController : ControllerBase
     private readonly IDistanceCalculationService _calculator;
 
     /// <summary>
+    /// Логгер контроллера
+    /// </summary>
+    private readonly ILogger<DistanceController> _logger;
+
+    /// <summary>
     /// Возвращает контроллер определения пути
     /// </summary>
-    /// <param name="calculator"></param>
-    public DistanceController(IDistanceCalculationService calculator)
+    /// <param name="calculator">Сервис расчётов расстояния</param>
+    /// <param name="logger">Логгер контроллера</param>
+    public DistanceController(IDistanceCalculationService calculator,
+        ILogger<DistanceController> logger)
     {
-        this._calculator = calculator;
+        _calculator = calculator;
+        _logger = logger;
     }
 
     /// <summary>
@@ -50,11 +58,20 @@ public class DistanceController : ControllerBase
             {
                 if (result.ErrorCode == ErrorCodes.Canceled)
                 {
+                    _logger.LogWarning("Distance calculation canceled. RequestId={RequestId}, ErrorCode={ErrorCode}",
+                        HttpContext.TraceIdentifier, result.ErrorCode);
+
                     return Problem(
                         title: "Запрос отменён",
                         detail: "Операция расчёта была отменена.",
                         statusCode: 499);
                 }
+
+                _logger.LogError(
+                    "Distance calculation returned internal failure. RequestId={RequestId}, ErrorCode={ErrorCode}, Message={Message}",
+                    HttpContext.TraceIdentifier,
+                    result.ErrorCode,
+                    result.Message);
 
                 return Problem(
                     title: "Внутренняя ошибка сервиса",
@@ -66,6 +83,11 @@ public class DistanceController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(
+                ex,
+                "Distance controller failed. RequestId={RequestId}",
+                HttpContext.TraceIdentifier);
+
             return Problem(
                 title: "Внутренняя ошибка сервиса",
                 detail: ex.Message,

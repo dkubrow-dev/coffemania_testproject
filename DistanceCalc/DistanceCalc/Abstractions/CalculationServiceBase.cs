@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DistanceCalc.Abstractions;
 
 /// <summary>
-/// Базовый класс, предоставляющий для всех сервисов основной функционал: реализацию интерфейса IDistanceCalculationService
-/// счётчик, а также обёртку для получения и выдачи данных.
+/// Базовый класс, предоставляющий для всех сервисов основной функционал:
+/// реализацию интерфейса IDistanceCalculationService, а также обёртку для получения и выдачи данных.
 /// </summary>
 /// <remarks>Для дальнейших реализация будет унифицировано поведение разных реализаций с вызывающим кодом</remarks>
 internal abstract class CalculationServiceBase : IDistanceCalculationService
@@ -41,7 +41,7 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
     /// <returns>Задачу с результирующим объектом.</returns>
     public async Task<Result> CalculateAsync(Input data, CancellationToken cancellationToken = default)
     {
-        string logId = Guid.NewGuid().ToString().ToLower().Replace("-", null);
+        string logId = Guid.NewGuid().ToString("N");
         _logger.LogDebug("{logId} - Distance calculation started. PointA={PointA}, PointB={PointB}, Mode={Mode}",
             logId, data.PointA, data.PointB, _settings.Mode);
 

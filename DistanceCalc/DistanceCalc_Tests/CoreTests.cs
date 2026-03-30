@@ -46,7 +46,7 @@ public class CoreTests
     {
         // Калькулятор с настройками и логгированием
         ISettingsProvider settings = new SettingsProvider(CalculatorServiceModes.DirectLine, -1);
-        using ILoggerFactory loggerFactory = new TestFileLoggerFactory(LogPath, _output);
+        using ILoggerFactory loggerFactory = new TestsLoggerFactory(LogPath, _output);
         IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(settings, loggerFactory);
 
         // Токен отмены
@@ -86,7 +86,7 @@ public class CoreTests
     {
         // Калькулятор с настройками и логгированием
         ISettingsProvider settings = new SettingsProvider(CalculatorServiceModes.DirectLine, 1500);
-        using ILoggerFactory loggerFactory = new TestFileLoggerFactory(LogPath, _output);
+        using ILoggerFactory loggerFactory = new TestsLoggerFactory(LogPath, _output);
         IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(settings, loggerFactory);
 
         // Токен отмены
@@ -112,15 +112,13 @@ public class CoreTests
     {
         // Калькулятор
         ISettingsProvider settings = new SettingsProvider(CalculatorServiceModes.DirectLine, -1);
-        using ILoggerFactory loggerFactory = new TestFileLoggerFactory(LogPath, _output);
+        using ILoggerFactory loggerFactory = new TestsLoggerFactory(LogPath, _output);
         IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(settings, loggerFactory);
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();
 
         const int loadCount = 1000;
-        TimeSpan deadline = TimeSpan.FromSeconds(0.5);
-
         Task<Result>[] tasks = Enumerable.Range(0, loadCount)
             .Select(task =>
             {

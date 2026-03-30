@@ -26,8 +26,13 @@ public static class CalculatorsFactory
         loggerFactory ??= NullLoggerFactory.Instance;
         ILogger factoryLogger = loggerFactory.CreateLogger(typeof(CalculatorsFactory));
 
-        factoryLogger.LogDebug("Creating distance calculation service. Mode={Mode}, SimulateDelayMs={SimulateDelayMs}",
-            settings.Mode, settings.SimulateDelayMs);
+        if (factoryLogger.IsEnabled(LogLevel.Debug))
+        {
+            factoryLogger.LogDebug(
+                "Creating distance calculation service. Mode={Mode}, SimulateDelayMs={SimulateDelayMs}",
+                settings.Mode,
+                settings.SimulateDelayMs);
+        }
 
         return settings.Mode switch
         {

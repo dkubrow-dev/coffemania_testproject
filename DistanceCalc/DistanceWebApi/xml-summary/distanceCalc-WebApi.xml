@@ -14,11 +14,17 @@
             Сервис расчётов дистанции.
             </summary>
         </member>
-        <member name="M:DistanceWebApi.Controllers.DistanceController.#ctor(DistanceCalc.Abstractions.IDistanceCalculationService)">
+        <member name="F:DistanceWebApi.Controllers.DistanceController._logger">
+            <summary>
+            Логгер контроллера
+            </summary>
+        </member>
+        <member name="M:DistanceWebApi.Controllers.DistanceController.#ctor(DistanceCalc.Abstractions.IDistanceCalculationService,Microsoft.Extensions.Logging.ILogger{DistanceWebApi.Controllers.DistanceController})">
             <summary>
             Возвращает контроллер определения пути
             </summary>
-            <param name="calculator"></param>
+            <param name="calculator">Сервис расчётов расстояния</param>
+            <param name="logger">Логгер контроллера</param>
         </member>
         <member name="M:DistanceWebApi.Controllers.DistanceController.Calculate(DistanceCalc.Models.Input,System.Threading.CancellationToken)">
             <summary>
@@ -33,6 +39,35 @@
             ErrorCode - код ошибки, если та произошла, либо 0, если всё в порядке.
             Distance - рассчитанное расстояние, если оно было посчитано.
             </returns>
+        </member>
+        <member name="T:DistanceWebApi.Middleware.RequestLoggingMiddleware">
+            <summary>
+            Промежуточный слой для логгирования HTTP запросов-ответов через выбранный провайдер логов
+            </summary>
+            <remarks>Отрабатывает только HTTP слой: "запрос поступил", "запрос отдали", коды статуса запроса и время выполнения</remarks>
+        </member>
+        <member name="F:DistanceWebApi.Middleware.RequestLoggingMiddleware._next">
+            <summary>
+            Делегат фактической обработки HTTP: пляшем вокруг него
+            </summary>
+        </member>
+        <member name="F:DistanceWebApi.Middleware.RequestLoggingMiddleware._logger">
+            <summary>
+            Логгер для промежуточного слоя
+            </summary>
+        </member>
+        <member name="M:DistanceWebApi.Middleware.RequestLoggingMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{DistanceWebApi.Middleware.RequestLoggingMiddleware})">
+            <summary>
+            Возвращает промежуточный слой логгирования
+            </summary>
+            <param name="next">Фунция-делегат, фактически обрабатывающая HTTP запрос</param>
+            <param name="logger">Логгер</param>
+        </member>
+        <member name="M:DistanceWebApi.Middleware.RequestLoggingMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext)">
+            <summary>
+            Задача на фактическую запись лога поступившего запроса
+            </summary>
+            <param name="context">Контекст поступившего HTTP запроса</param>
         </member>
         <member name="T:DistanceWebApi.Services.CalculatorSettingsProvider">
             <summary>

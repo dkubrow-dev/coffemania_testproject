@@ -6,8 +6,8 @@
     <members>
         <member name="T:DistanceCalc.Abstractions.CalculationServiceBase">
             <summary>
-            Базовый класс, предоставляющий для всех сервисов основной функционал: реализацию интерфейса IDistanceCalculationService
-            счётчик, а также обёртку для получения и выдачи данных.
+            Базовый класс, предоставляющий для всех сервисов основной функционал:
+            реализацию интерфейса IDistanceCalculationService, а также обёртку для получения и выдачи данных.
             </summary>
             <remarks>Для дальнейших реализация будет унифицировано поведение разных реализаций с вызывающим кодом</remarks>
         </member>
@@ -135,30 +135,14 @@
             Точка двухмерного пространства для определения положения
             </summary>
             <remarks>Не наследуемый</remarks>
-            <remarks>
-            Возвращает новую точку пространства по заданным координатам.
-            </remarks>
             <remarks>При отсутствии координат вернёт точку (0, 0)</remarks>
-            <param name="x">Абсциса</param>
-            <param name="y">Ордината</param>
         </member>
         <member name="M:DistanceCalc.Models.Point2D.#ctor(System.Double,System.Double)">
             <summary>
-            Точка двухмерного пространства для определения положения
-            </summary>
-            <remarks>Не наследуемый</remarks>
-            <remarks>
             Возвращает новую точку пространства по заданным координатам.
-            </remarks>
-            <remarks>При отсутствии координат вернёт точку (0, 0)</remarks>
+            </summary>
             <param name="x">Абсциса</param>
             <param name="y">Ордината</param>
-        </member>
-        <member name="P:DistanceCalc.Models.Point2D.x">
-            <summary>Абсциса</summary>
-        </member>
-        <member name="P:DistanceCalc.Models.Point2D.y">
-            <summary>Ордината</summary>
         </member>
         <member name="P:DistanceCalc.Models.Point2D.X">
             <summary>
