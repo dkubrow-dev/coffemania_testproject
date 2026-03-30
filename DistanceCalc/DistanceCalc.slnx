@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="DistanceCalc/DistanceCalc.csproj" />
+  <Project Path="DistanceCalc_Tests/DistanceCalc_Tests.csproj" Id="24595b4b-2a17-4b06-8f49-dea09b3fd2b0" />
+</Solution>
