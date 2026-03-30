@@ -1,11 +1,24 @@
+using DistanceCalc.Abstractions;
 using DistanceCalc.Services;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// добавим в контейнер сервис калькуляции
-//   Сейчас достаточно синглтона - он умеет рабоать в многопоточном режиме,
-//   к тому же он вызывается 1 раз на вызов контроллера: затраты на создание объекта через фабрику не окупятся
-builder.Services.AddSingleton(_ => CalculatorsFactory.GetInstance());
+// развёртывание в Windows и Linux
+builder.Services.AddWindowsService();
+builder.Services.AddSystemd();
+
+// Читаем настройки, добавляем сервис калькулятора
+builder.Services.Configure<CalculatorSettingsProvider>(builder.Configuration.GetRequiredSection(CalculatorSettingsProvider.SectionName));
+builder.Services.AddSingleton<ISettingsProvider>(provider => provider.GetRequiredService<IOptions<CalculatorSettingsProvider>>().Value);
+builder.Services.AddSingleton(provider =>
+{
+    var settings = provider.GetRequiredService<ISettingsProvider>();
+    return CalculatorsFactory.GetInstance(settings);
+});
+
+// Добавляем контроллеры API
 builder.Services.AddControllers();
 
 // добавляем OpenAPI и вывод из xml summary разметки

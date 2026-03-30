@@ -3,7 +3,7 @@
 /// <summary>
 /// Режимы работы калькулятора: фабрика выбирает сервис выполнения запроса, исходя из этих возможных значений
 /// </summary>
-internal enum CalculatorServiceModes : byte
+public enum CalculatorServiceModes : byte
 {
     /// <summary>
     /// Сервис неопределён (точно будет ошибкой)
@@ -15,5 +15,4 @@ internal enum CalculatorServiceModes : byte
     /// </summary>
     DirectLine = 1
 
-    // сюда добавлять новые значения при добавлении новых сервисов
 }

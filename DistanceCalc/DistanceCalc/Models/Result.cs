@@ -13,18 +13,20 @@ public struct Result
     public bool Success { get; internal set; }
 
     /// <summary>
+    /// Раcстояние между указанными точками
+    /// </summary>
+    public double Distance { get; internal set; }
+
+    /// <summary>
+    /// Код внутренней ошибки.
+    /// </summary>
+    /// <remarks>0 "NoErrors" - всё хорошо. Любое иное значение - ошибка: см. логи</remarks>
+    public ErrorCodes ErrorCode { get; internal set; }
+
+    /// <summary>
     /// Сообщение (если требуется) о результате выполнения состояния
     /// </summary>
     /// <remarks>Для вывода ошибок и иных состояний выполнения запроса</remarks>
     public string? Message { get; internal set; }
 
-    /// <summary>
-    /// Информация о произошедшей ошибке (если произошла)
-    /// </summary>
-    public Exception? Exception { get; internal set; }
-
-    /// <summary>
-    /// Растояние между указанными точками
-    /// </summary>
-    public double Distance { get; internal set; }
 }

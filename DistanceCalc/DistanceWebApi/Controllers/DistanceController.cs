@@ -1,4 +1,4 @@
-﻿using DistanceCalc.Abcstractions;
+﻿using DistanceCalc.Abstractions;
 using DistanceCalc.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,21 +35,21 @@ public class DistanceController : ControllerBase
     /// Объект передачи данных о расстоянии: 
     /// Success - флаг успеха выполнения операции. 
     /// Message - сервисная информация по выполненной операции.
-    /// Extption - информация об ошибке, если та произошла
+    /// Exception - информация об ошибке, если та произошла
     /// Distance - рассчитанное расстояние, если оно было посчитано.
     /// </returns>
-    [HttpPost("GetDistance")]
+    [HttpPost("Calculate")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status499ClientClosedRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Result>> GetDistanceAsync([FromBody] Input input, CancellationToken cancellationToken)
+    public async Task<ActionResult<Result>> Calculate([FromBody] Input input, CancellationToken cancellationToken)
     {
         try
         {
             var result = await calculator.CalculateAsync(input, cancellationToken);
             if (result.Success == false)
             {
-                if (result.Exception is TaskCanceledException)
+                if (result.ErrorCode == ErrorCodes.Canceled)
                 {
                     return Problem(
                         title: "Запрос отменён",

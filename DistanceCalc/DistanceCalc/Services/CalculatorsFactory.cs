@@ -1,4 +1,4 @@
-﻿using DistanceCalc.Abcstractions;
+﻿using DistanceCalc.Abstractions;
 using DistanceCalc.Models;
 
 namespace DistanceCalc.Services;
@@ -17,20 +17,13 @@ public class CalculatorsFactory
     /// </summary>
     /// <returns>Интерфейс взаимодействия с сервисом расчёта длины</returns>
     /// <exception cref="Exception">В случае проблем с настройками не сможет выполнить поиск сервиса</exception>
-    public static IDistanceCalculationService GetInstance()
+    public static IDistanceCalculationService GetInstance(ISettingsProvider settings)
     {
-        if (!Enum.TryParse(Settings.GetValue("CalculationServiceMode"), out CalculatorServiceModes mode))
+        return settings.Mode switch
         {
-            throw new Exception("No valid \"CalculationServiceMode\" value in Settings.");
-        }
-
-        return mode switch
-        {
-            CalculatorServiceModes.DirectLine => new DirectLineCalculationService(),
-            // добавлять сюда новые значения и при реализации новых сервисов
-
-            CalculatorServiceModes.Undefined => throw new Exception("Check Settings: \"CalculationServiceMode\" is Undefined"),
-            _ => throw new Exception("Check Settings: unexpected value \"CalculationServiceMode\" " + mode.ToString()),
+            CalculatorServiceModes.DirectLine => new DirectLineCalculationService(settings),
+            CalculatorServiceModes.Undefined => throw new Exception($"Check ISettingsProvider: \"{nameof(settings.Mode)}\" is \"{settings.Mode}\"."),
+            _ => throw new Exception($"Check ISettingsProvider: unexpected value. \"{nameof(settings.Mode)}\" is \"{settings.Mode}\".")
         };
     }
 }

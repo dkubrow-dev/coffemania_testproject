@@ -1,8 +1,15 @@
-﻿using DistanceCalc.Abcstractions;
+﻿using DistanceCalc.Abstractions;
 using DistanceCalc.Models;
 using DistanceCalc.Services;
 
 namespace DistanceCalc_Tests;
+
+/// <summary>
+/// Экспресс объявление микро-провайдера настроек для юнит-тестов
+/// </summary>
+/// <param name="Mode">Режим расчёта расстояний</param>
+/// <param name="SimulateDelayMs">Режим задержки в расчётах</param>
+sealed record SettingsProvider(CalculatorServiceModes Mode, int SimulateDelayMs) : ISettingsProvider;
 
 /// <summary>
 /// Тесты библиотеки калькулятора на её основной функционал
@@ -13,50 +20,61 @@ public class CoreTests
     /// Базовые проверки на основной функционал
     /// </summary>
     [Fact]
-    public async Task GeneralFunctionalityIsOkAsync()
+    public async Task GeneralFunctionality()
     {
-        // Калькулятор
-        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance();
+        // Калькулятор с настройками
+        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, -1));
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();
         CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-        // Проверка 1: правильный расчёт египетского треугольника
-        Input calcInput = new() { PointA = new(0, 0), PointB = new(3, 4) };
-        Result result = await calculator.CalculateAsync(calcInput, cancellationToken);
-        Assert.True(result.Success);
-        Assert.Equal(5, result.Distance);
+        // Проверка 1: Верные расчёты
+        Dictionary<Input, double> testData = new()
+        {
+            { new Input() {PointA = new(0, 0), PointB = new(3, 4)}, 5 },
+            { new Input() {PointA = new(1, 2), PointB = new(4, 6)}, 5 },
+            { new Input() {PointA = new(-1, -1), PointB = new(2, 3)}, 5 },
+            { new Input() {PointA = new(1, 1), PointB = new(1, 1)}, 0 },
+            { new Input() {PointA = new(1, 0), PointB = new(-1, 0)}, 2 }
+        };
 
-        // Проверка 2: неверный расчёт египетского треугольника
-        calcInput = new() { PointA = new(0, 1), PointB = new(3, 4) };
-        result = await calculator.CalculateAsync(calcInput, cancellationToken);
-        Assert.True(result.Success);
-        Assert.NotEqual(5, result.Distance);
+        foreach ((Input input, double expectedValue) in testData)
+        {
+            Result result = await calculator.CalculateAsync(input, cancellationToken);
+            Assert.True(result.Success);
+            Assert.Equal(expectedValue, result.Distance);
+        }
+
+        // Проверка 2: Неверный расчёт
+        Input errInput = new() { PointA = new(0, 1), PointB = new(3, 4) };
+        Result errResult = await calculator.CalculateAsync(errInput, cancellationToken);
+        Assert.True(errResult.Success);
+        Assert.NotEqual(5, errResult.Distance);
     }
 
     /// <summary>
-    /// Проверяет работу токена.
+    /// Проверяет работу токена с симуляцией медленного исполнения
     /// </summary>
     /// <remarks>Под виртуальной нагрузкой на объекте-исполнителе токен отмены должен успеть отменить задание</remarks>
     [Fact]
-    public async Task CancelationIsOkAsync()
+    public async Task CancelationToken()
     {
         // Калькулятор
-        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance();
+        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, 1500));
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();
         CancellationToken cancellationToken = cancellationTokenSource.Token;
-        Input calcInput = new() { PointA = new(0, 0), PointB = new(0, 0) };
 
         // проверяем работу токена 
+        Input calcInput = new() { PointA = new(0, 0), PointB = new(0, 0) };
         Task<Result> task = calculator.CalculateAsync(calcInput, cancellationToken);
         cancellationTokenSource.Cancel();
         Result result = await task;
 
         Assert.False(result.Success);
-        Assert.IsType<TaskCanceledException>(result.Exception);
+        Assert.Equal(ErrorCodes.Canceled, result.ErrorCode);
     }
 
     /// <summary>
@@ -64,15 +82,19 @@ public class CoreTests
     /// Убеждается, что множество потоков не мешают друг другу, и все из них возвращаются с успехом
     /// </summary>
     [Fact]
-    public async Task MultithreadIsOk()
+    public async Task MultithreadLoad()
     {
         // Калькулятор
-        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance();
+        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, -1));
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();
 
-        Task<Result>[] tasks = Enumerable.Range(0, 100)
+        const int loadCount = 1000;
+        TimeSpan deadline = TimeSpan.FromSeconds(0.01);
+
+        DateTime start = DateTime.Now;
+        Task<Result>[] tasks = Enumerable.Range(0, loadCount)
             .Select(task =>
             {
                 Input calcInput = new() { PointA = new(0, 0), PointB = new(0, 0) };
@@ -81,12 +103,14 @@ public class CoreTests
             .ToArray();
 
         Result[] results = await Task.WhenAll(tasks);
-        Assert.Equal(100, results.Length);
-        Assert.All(results, r => Assert.True(r.Success));
+        DateTime end = DateTime.Now;
 
-        for (int i = 1; i <= 100; i++) // характерная страка для абстрактного класса с указанием номера вызова
+        Assert.Equal(loadCount, results.Length);
+        Assert.All(results, r =>
         {
-            Assert.Contains(results, r => r.Message?.StartsWith("Thread " + i) ?? false);
-        }
+            Assert.True(r.Success);
+            Assert.Equal(ErrorCodes.NoErrors, r.ErrorCode);
+        });
+        Assert.True(start - end < deadline);
     }
 }
