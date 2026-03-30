@@ -23,6 +23,7 @@
         <member name="M:DistanceWebApi.Controllers.DistanceController.GetDistanceAsync(DistanceCalc.Models.Input,System.Threading.CancellationToken)">
             <summary>
             Рассчитывает путь от переданных точек A и B. Возвращает расстояние в километрах.
+            Ожидаемое время выполнения: 1 500 миллисекунды (искуственной задержки) + само время расчёта
             </summary>
             <param name="input">Входные данные для расчёта расстояния</param>
             <param name="cancellationToken">Токен отмены выполнения</param>

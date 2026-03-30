@@ -10,13 +10,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="xml-summary\distanceCalc.xml" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Content Include="xml-summary\distanceCalc.xml">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Content>
+	  <None Update="xml-summary\distanceCalc.xml">
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

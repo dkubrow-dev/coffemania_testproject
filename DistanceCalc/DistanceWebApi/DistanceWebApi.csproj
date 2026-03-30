@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -9,16 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="xml-summary\distanceCalc-WebApi.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="xml-summary\distanceCalc-WebApi.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
   </ItemGroup>
@@ -26,5 +16,18 @@
   <ItemGroup>
     <ProjectReference Include="..\DistanceCalc\DistanceCalc.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="xml-summary\distanceCalc-WebApi.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="xml-summary\distanceCalc.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <Target Name="CopySiblingXmlDocs" AfterTargets="Build">
+  	<Copy SourceFiles="$(SolutionDir)DistanceCalc\xml-summary\distanceCalc.xml" DestinationFolder="$(SolutionDir)DistanceWebApi\xml-summary" Condition="Exists('$(SolutionDir)DistanceCalc\xml-summary\distanceCalc.xml')" />
+  </Target>
 
 </Project>

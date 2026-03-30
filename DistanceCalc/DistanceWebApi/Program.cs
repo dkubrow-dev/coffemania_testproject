@@ -12,7 +12,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "xml-summary", "distanceCalc-WebApi.xml"));
+    string baseDir = AppContext.BaseDirectory;
+    options.IncludeXmlComments(Path.Combine(baseDir, "xml-summary", "distanceCalc-WebApi.xml"));
+    options.IncludeXmlComments(Path.Combine(baseDir, "xml-summary", "distanceCalc.xml"));
 });
 
 var app = builder.Build();
