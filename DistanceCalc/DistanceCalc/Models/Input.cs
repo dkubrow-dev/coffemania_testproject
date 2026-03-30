@@ -1,4 +1,6 @@
-﻿namespace DistanceCalc.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DistanceCalc.Models;
 
 /// <summary>
 /// Структура входных данных для подсчёта расстояний
@@ -10,10 +12,12 @@ public sealed record Input
     /// <summary>
     /// Первая точка для подсчёта расстояния
     /// </summary>
+    [Required]
     public Point2D PointA { get; init; } = new();
 
     /// <summary>
     /// Вторая точка для подсчёта расстояния
     /// </summary>
+    [Required]
     public Point2D PointB { get; init; } = new();
 }

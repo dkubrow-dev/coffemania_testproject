@@ -12,7 +12,7 @@ builder.Services.AddSystemd();
 // Читаем настройки, добавляем сервис калькулятора
 builder.Services.Configure<CalculatorSettingsProvider>(builder.Configuration.GetRequiredSection(CalculatorSettingsProvider.SectionName));
 builder.Services.AddSingleton<ISettingsProvider>(provider => provider.GetRequiredService<IOptions<CalculatorSettingsProvider>>().Value);
-builder.Services.AddSingleton(provider =>
+builder.Services.AddSingleton<IDistanceCalculationService>(provider =>
 {
     var settings = provider.GetRequiredService<ISettingsProvider>();
     return CalculatorsFactory.GetInstance(settings);

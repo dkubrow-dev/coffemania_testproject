@@ -5,7 +5,7 @@
 /// </summary>
 /// <remarks>Позволяет вызывающему коду получить стандартизированный вывод информации</remarks>
 [Serializable]
-public struct Result
+public sealed record Result
 {
     /// <summary>
     /// Флаг успешного расчёта расстояния
