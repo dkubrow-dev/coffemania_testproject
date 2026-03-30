@@ -39,18 +39,8 @@ public sealed class RequestLoggingMiddleware
         string requestId = context.TraceIdentifier;
         string method = context.Request.Method;
         string path = context.Request.Path.HasValue ? context.Request.Path.Value! : "/";
-        string queryString = context.Request.QueryString.HasValue
-            ? context.Request.QueryString.Value!
-            : string.Empty;
 
         Stopwatch stopwatch = Stopwatch.StartNew();
-
-        _logger.LogInformation(
-            "HTTP request started. RequestId={RequestId}, Method={Method}, Path={Path}, QueryString={QueryString}",
-            requestId,
-            method,
-            path,
-            queryString);
 
         try
         {

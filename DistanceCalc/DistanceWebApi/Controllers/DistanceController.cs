@@ -67,12 +67,6 @@ public class DistanceController : ControllerBase
                         statusCode: 499);
                 }
 
-                _logger.LogError(
-                    "Distance calculation returned internal failure. RequestId={RequestId}, ErrorCode={ErrorCode}, Message={Message}",
-                    HttpContext.TraceIdentifier,
-                    result.ErrorCode,
-                    result.Message);
-
                 return Problem(
                     title: "Внутренняя ошибка сервиса",
                     detail: result.Message,
