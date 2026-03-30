@@ -36,7 +36,7 @@ public sealed class RequestLoggingMiddleware
     /// <param name="context">Контекст поступившего HTTP запроса</param>
     public async Task Invoke(HttpContext context)
     {
-        string requestId = context.TraceIdentifier;
+        string requestId = Guid.NewGuid().ToString("N");
         string method = context.Request.Method;
         string path = context.Request.Path.HasValue ? context.Request.Path.Value! : "/";
 

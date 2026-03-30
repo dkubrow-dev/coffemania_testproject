@@ -40,8 +40,7 @@ internal class DirectLineCalculationService : CalculationServiceBase
 
         double distance = (B - A).Length;
 
-        _logger.LogDebug("Direct line distance calculated. PointA={PointA}, PointB={PointB}, Distance={Distance}",
-            A, B, distance);
+        _logger.LogDebug("Direct line distance calculated. Distance={Distance}", distance);
 
         return distance;
     }

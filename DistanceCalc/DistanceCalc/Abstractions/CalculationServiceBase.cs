@@ -47,8 +47,7 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
         try
         {
             double distance = await GetDistanceAsync(data.PointA, data.PointB, cancellationToken);
-            _logger.LogDebug("Distance calculation completed successfully. Distance={Distance}, Mode={Mode}",
-                distance, _settings.Mode);
+            _logger.LogDebug("Distance calculation completed successfully.");
 
             return new Result
             {
@@ -59,8 +58,7 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
         }
         catch (OperationCanceledException ex)
         {
-            _logger.LogWarning(ex, "Distance calculation was canceled. PointA={PointA}, PointB={PointB}, Mode={Mode}",
-                data.PointA, data.PointB, _settings.Mode);
+            _logger.LogWarning(ex, "Distance calculation was canceled.");
 
             return new Result
             {
@@ -71,8 +69,7 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Distance calculation failed. PointA={PointA}, PointB={PointB}, Mode={Mode}",
-                data.PointA, data.PointB, _settings.Mode);
+            _logger.LogError(ex, "Distance calculation failed.");
 
             return new Result
             {
