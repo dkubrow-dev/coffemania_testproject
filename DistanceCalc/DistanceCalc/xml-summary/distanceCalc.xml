@@ -16,11 +16,17 @@
             Настройки текущего исполнителя
             </summary>
         </member>
-        <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.#ctor(DistanceCalc.Abstractions.ISettingsProvider)">
+        <member name="F:DistanceCalc.Abstractions.CalculationServiceBase._logger">
+            <summary>
+            Логгер, провайдер которого передан вызывающим кодом
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.#ctor(DistanceCalc.Abstractions.ISettingsProvider,Microsoft.Extensions.Logging.ILogger)">
             <summary>
             Возвращает абстрактного исполнителя для IDistanceCalculationService
             </summary>
             <param name="settings">Настройки режима работы калькулятора</param>
+            <param name="logger">Логгер, провайдер которого обеспечивается вызывающим кодом</param>
         </member>
         <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.CalculateAsync(DistanceCalc.Models.Input,System.Threading.CancellationToken)">
             <summary>
@@ -31,12 +37,13 @@
             <remarks>Генерируемые исключения ложатся во внутренний объект. Не выбрасывает исключения вверх</remarks>
             <returns>Задачу с результирующим объектом.</returns>
         </member>
-        <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.Threading.CancellationToken)">
+        <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.String,System.Threading.CancellationToken)">
             <summary>
             Метод фактического расчёта расстояния для конкретной реализации.
             </summary>
             <param name="A">Точка А</param>
             <param name="B">Точка Б</param>
+            <param name="logId">Идентификатор текущего запроса на расчёт для логгирования</param>
             <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
             <returns>Расстояние в километрах от точки А до точки Б</returns>
         </member>
@@ -218,35 +225,47 @@
             Фабрика по выбору конкретного сервиса по выполнению расчётов.
             </summary>
             <remarks>
-            В текущей реализации излишняя, но(!) по точно потребуется при доработке сервиса.
+            В текущей реализации по большей части излишняя, но(!) по точно потребуется при доработке сервиса.
             Для примера - просто по текущим настройкам из ini-файла, но потом фабрику можно сделать динамически настраиваемой
             </remarks>
         </member>
-        <member name="M:DistanceCalc.Services.CalculatorsFactory.GetInstance(DistanceCalc.Abstractions.ISettingsProvider)">
+        <member name="M:DistanceCalc.Services.CalculatorsFactory.GetInstance(DistanceCalc.Abstractions.ISettingsProvider,Microsoft.Extensions.Logging.ILoggerFactory)">
             <summary>
             По текущим настройкам выбирает нужный для работы сервис и возвращает его интерфейс
             </summary>
+            <param name="settings">Провайдер настроек калькулятора, предоставляемый вызывающим кодом</param>
+            <param name="loggerFactory">Фабрика логгера, предоставляемая вызывающим кодом</param>
             <returns>Интерфейс взаимодействия с сервисом расчёта длины</returns>
             <exception cref="T:System.Exception">В случае проблем с настройками не сможет выполнить поиск сервиса</exception>
+        </member>
+        <member name="M:DistanceCalc.Services.CalculatorsFactory.CreateFactoryException(Microsoft.Extensions.Logging.ILogger,DistanceCalc.Models.CalculatorServiceModes)">
+            <summary>
+            Создаёт и логгирует исключение, выкидываемое из-за невалидного режима работы калькулятора
+            </summary>
+            <param name="logger">Логгер для проведения записи лога об ошибке</param>
+            <param name="mode">Запрошенный режим работы калькулятора</param>
+            <returns>Исключение для дальнейшего выбрасывания выше</returns>
         </member>
         <member name="T:DistanceCalc.Services.DirectLineCalculationService">
             <summary>
             Сервис расчёта расстояния "По прямой линии"
             </summary>
         </member>
-        <member name="M:DistanceCalc.Services.DirectLineCalculationService.#ctor(DistanceCalc.Abstractions.ISettingsProvider)">
+        <member name="M:DistanceCalc.Services.DirectLineCalculationService.#ctor(DistanceCalc.Abstractions.ISettingsProvider,Microsoft.Extensions.Logging.ILogger)">
             <summary>
             Возвращает настроенный сервис расчёта расстояния "По прямой линии"
             </summary>
             <param name="settings">Сервис настроек</param>
+            <param name="logger">Логгер, провайдер которого обеспечивается вызывающим кодом</param>
         </member>
-        <member name="M:DistanceCalc.Services.DirectLineCalculationService.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.Threading.CancellationToken)">
+        <member name="M:DistanceCalc.Services.DirectLineCalculationService.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.String,System.Threading.CancellationToken)">
             <summary>
             Рассчитывает фактическое расстояние между точками по прямой линии
             </summary>
             <remarks>Применена простая теорема Пифагора</remarks>
             <param name="A">Точка А</param>
             <param name="B">Точка Б</param>
+            <param name="logId">Идентификатор текущего запроса на расчёт для логгирования</param>
             <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
             <returns>Расстояние в километрах от точки А до точки Б</returns>
         </member>

@@ -1,11 +1,13 @@
 ﻿using DistanceCalc.Abstractions;
 using DistanceCalc.Models;
 using DistanceCalc.Services;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
 
 namespace DistanceCalc_Tests;
 
 /// <summary>
-/// Экспресс объявление микро-провайдера настроек для юнит-тестов
+/// Экспресс объявление объекта микро-провайдера настроек для юнит-тестов
 /// </summary>
 /// <param name="Mode">Режим расчёта расстояний</param>
 /// <param name="SimulateDelayMs">Режим задержки в расчётах</param>
@@ -17,13 +19,35 @@ sealed record SettingsProvider(CalculatorServiceModes Mode, int SimulateDelayMs)
 public class CoreTests
 {
     /// <summary>
+    /// Путь для файла логгирования
+    /// </summary>
+    private static readonly string LogPath = Path.Combine(AppContext.BaseDirectory,
+        "logs", $"tests-{DateTime.Now:yyyyMMdd-HHmmss}.log");
+
+    /// <summary>
+    /// объект, куда будет писаться дополнительно лог
+    /// </summary>
+    private readonly ITestOutputHelper _output;
+
+    /// <summary>
+    /// Конструктор запрашивает сервис вывода информации в тестовое окно
+    /// </summary>
+    /// <param name="output">объект, куда будет писаться дополнительно лог</param>
+    public CoreTests(ITestOutputHelper output)
+    {
+        _output = output;
+    }
+
+    /// <summary>
     /// Базовые проверки на основной функционал
     /// </summary>
     [Fact]
     public async Task GeneralFunctionality()
     {
-        // Калькулятор с настройками
-        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, -1));
+        // Калькулятор с настройками и логгированием
+        ISettingsProvider settings = new SettingsProvider(CalculatorServiceModes.DirectLine, -1);
+        using ILoggerFactory loggerFactory = new TestFileLoggerFactory(LogPath, _output);
+        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(settings, loggerFactory);
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();
@@ -60,8 +84,10 @@ public class CoreTests
     [Fact]
     public async Task CancellationToken()
     {
-        // Калькулятор
-        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, 1500));
+        // Калькулятор с настройками и логгированием
+        ISettingsProvider settings = new SettingsProvider(CalculatorServiceModes.DirectLine, 1500);
+        using ILoggerFactory loggerFactory = new TestFileLoggerFactory(LogPath, _output);
+        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(settings, loggerFactory);
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();
@@ -85,7 +111,9 @@ public class CoreTests
     public async Task MultithreadLoad()
     {
         // Калькулятор
-        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new SettingsProvider(CalculatorServiceModes.DirectLine, -1));
+        ISettingsProvider settings = new SettingsProvider(CalculatorServiceModes.DirectLine, -1);
+        using ILoggerFactory loggerFactory = new TestFileLoggerFactory(LogPath, _output);
+        IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(settings, loggerFactory);
 
         // Токен отмены
         using CancellationTokenSource cancellationTokenSource = new();

@@ -1,4 +1,6 @@
 ﻿using DistanceCalc.Models;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DistanceCalc.Abstractions;
 
@@ -12,13 +14,23 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
     /// <summary>
     /// Настройки текущего исполнителя
     /// </summary>
-    private protected ISettingsProvider _settings;
+    private protected readonly ISettingsProvider _settings;
+
+    /// <summary>
+    /// Логгер, провайдер которого передан вызывающим кодом
+    /// </summary>
+    private protected readonly ILogger _logger;
 
     /// <summary>
     /// Возвращает абстрактного исполнителя для IDistanceCalculationService
     /// </summary>
     /// <param name="settings">Настройки режима работы калькулятора</param>
-    internal CalculationServiceBase(ISettingsProvider settings) => _settings = settings;
+    /// <param name="logger">Логгер, провайдер которого обеспечивается вызывающим кодом</param>
+    internal CalculationServiceBase(ISettingsProvider settings, ILogger? logger = null)
+    {
+        _settings = settings;
+        _logger = logger ?? NullLogger.Instance;
+    }
 
     /// <summary>
     /// Возвращает раcстояние между двумя точками по прямой линии, соединяющей их наплоскости.
@@ -29,17 +41,28 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
     /// <returns>Задачу с результирующим объектом.</returns>
     public async Task<Result> CalculateAsync(Input data, CancellationToken cancellationToken = default)
     {
+        string logId = Guid.NewGuid().ToString().ToLower().Replace("-", null);
+        _logger.LogDebug("{logId} - Distance calculation started. PointA={PointA}, PointB={PointB}, Mode={Mode}",
+            logId, data.PointA, data.PointB, _settings.Mode);
+
         try
         {
+            double distance = await GetDistanceAsync(data.PointA, data.PointB, logId, cancellationToken);
+            _logger.LogDebug("{logId} - Distance calculation completed successfully. Distance={Distance}, Mode={Mode}",
+                logId, distance, _settings.Mode);
+
             return new Result
             {
                 Success = true,
-                Distance = await GetDistanceAsync(data.PointA, data.PointB, cancellationToken),
+                Distance = distance,
                 ErrorCode = ErrorCodes.NoErrors
             };
         }
         catch (OperationCanceledException ex)
         {
+            _logger.LogWarning(ex, "{logId} - Distance calculation was canceled. PointA={PointA}, PointB={PointB}, Mode={Mode}",
+                logId, data.PointA, data.PointB, _settings.Mode);
+
             return new Result
             {
                 Success = false,
@@ -49,6 +72,9 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "{logId} - Distance calculation failed. PointA={PointA}, PointB={PointB}, Mode={Mode}",
+                logId, data.PointA, data.PointB, _settings.Mode);
+
             return new Result
             {
                 Success = false,
@@ -63,7 +89,8 @@ internal abstract class CalculationServiceBase : IDistanceCalculationService
     /// </summary>
     /// <param name="A">Точка А</param>
     /// <param name="B">Точка Б</param>
+    /// <param name="logId">Идентификатор текущего запроса на расчёт для логгирования</param>
     /// <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
     /// <returns>Расстояние в километрах от точки А до точки Б</returns>
-    protected abstract Task<double> GetDistanceAsync(Point2D A, Point2D B, CancellationToken cancellationToken);
+    protected abstract Task<double> GetDistanceAsync(Point2D A, Point2D B, string logId, CancellationToken cancellationToken);
 }
