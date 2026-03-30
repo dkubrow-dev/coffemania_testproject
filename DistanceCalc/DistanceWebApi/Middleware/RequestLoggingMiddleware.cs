@@ -42,54 +42,55 @@ public sealed class RequestLoggingMiddleware
 
         Stopwatch stopwatch = Stopwatch.StartNew();
 
-        try
+        // Открываем scope на весь жизненный цикл HTTP-запроса: лог можно будет проследить пройденному конвейеру
+        using (_logger.BeginScope(new List<KeyValuePair<string, object>> { new("RequestId", requestId) }))
         {
-            await _next(context);
+            try
+            {
+                await _next(context);
 
-            stopwatch.Stop();
+                stopwatch.Stop();
 
-            LogLevel level = context.Response.StatusCode >= 500
-                ? LogLevel.Error
-                : context.Response.StatusCode >= 400
-                    ? LogLevel.Warning
-                    : LogLevel.Information;
+                LogLevel level = context.Response.StatusCode >= 500
+                    ? LogLevel.Error
+                    : context.Response.StatusCode >= 400
+                        ? LogLevel.Warning
+                        : LogLevel.Information;
 
-            _logger.Log(
-                level,
-                "HTTP request completed. RequestId={RequestId}, Method={Method}, Path={Path}, StatusCode={StatusCode}, ElapsedMs={ElapsedMs}",
-                requestId,
-                method,
-                path,
-                context.Response.StatusCode,
-                stopwatch.ElapsedMilliseconds);
-        }
-        catch (OperationCanceledException ex) when (context.RequestAborted.IsCancellationRequested)
-        {
-            stopwatch.Stop();
+                _logger.Log(
+                    level,
+                    "HTTP request completed. Method={Method}, Path={Path}, StatusCode={StatusCode}, ElapsedMs={ElapsedMs}",
+                    method,
+                    path,
+                    context.Response.StatusCode,
+                    stopwatch.ElapsedMilliseconds);
+            }
+            catch (OperationCanceledException ex) when (context.RequestAborted.IsCancellationRequested)
+            {
+                stopwatch.Stop();
 
-            _logger.LogWarning(
-                ex,
-                "HTTP request canceled by client. RequestId={RequestId}, Method={Method}, Path={Path}, ElapsedMs={ElapsedMs}",
-                requestId,
-                method,
-                path,
-                stopwatch.ElapsedMilliseconds);
+                _logger.LogWarning(
+                    ex,
+                    "HTTP request canceled by client. Method={Method}, Path={Path}, ElapsedMs={ElapsedMs}",
+                    method,
+                    path,
+                    stopwatch.ElapsedMilliseconds);
 
-            throw;
-        }
-        catch (Exception ex)
-        {
-            stopwatch.Stop();
+                throw;
+            }
+            catch (Exception ex)
+            {
+                stopwatch.Stop();
 
-            _logger.LogError(
-                ex,
-                "HTTP request failed with unhandled exception. RequestId={RequestId}, Method={Method}, Path={Path}, ElapsedMs={ElapsedMs}",
-                requestId,
-                method,
-                path,
-                stopwatch.ElapsedMilliseconds);
+                _logger.LogError(
+                    ex,
+                    "HTTP request failed with unhandled exception. Method={Method}, Path={Path}, ElapsedMs={ElapsedMs}",
+                    method,
+                    path,
+                    stopwatch.ElapsedMilliseconds);
 
-            throw;
+                throw;
+            }
         }
     }
 }

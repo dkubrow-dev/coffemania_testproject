@@ -9,7 +9,10 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // NLog будет единым провайдером на всё
 builder.Logging.ClearProviders();
-builder.Host.UseNLog();
+builder.Host.UseNLog(new NLogAspNetCoreOptions
+{
+    IncludeScopes = true
+});
 
 // развёртывание в Windows и Linux
 builder.Services.AddWindowsService();

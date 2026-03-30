@@ -58,8 +58,7 @@ public class DistanceController : ControllerBase
             {
                 if (result.ErrorCode == ErrorCodes.Canceled)
                 {
-                    _logger.LogWarning("Distance calculation canceled. RequestId={RequestId}, ErrorCode={ErrorCode}",
-                        HttpContext.TraceIdentifier, result.ErrorCode);
+                    _logger.LogWarning("Distance calculation canceled. ErrorCode={ErrorCode}", result.ErrorCode);
 
                     return Problem(
                         title: "Запрос отменён",
@@ -77,10 +76,7 @@ public class DistanceController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(
-                ex,
-                "Distance controller failed. RequestId={RequestId}",
-                HttpContext.TraceIdentifier);
+            _logger.LogError(ex, "Distance controller failed.");
 
             return Problem(
                 title: "Внутренняя ошибка сервиса",

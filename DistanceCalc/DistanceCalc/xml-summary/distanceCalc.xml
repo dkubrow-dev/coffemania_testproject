@@ -37,13 +37,12 @@
             <remarks>Генерируемые исключения ложатся во внутренний объект. Не выбрасывает исключения вверх</remarks>
             <returns>Задачу с результирующим объектом.</returns>
         </member>
-        <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.String,System.Threading.CancellationToken)">
+        <member name="M:DistanceCalc.Abstractions.CalculationServiceBase.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.Threading.CancellationToken)">
             <summary>
             Метод фактического расчёта расстояния для конкретной реализации.
             </summary>
             <param name="A">Точка А</param>
             <param name="B">Точка Б</param>
-            <param name="logId">Идентификатор текущего запроса на расчёт для логгирования</param>
             <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
             <returns>Расстояние в километрах от точки А до точки Б</returns>
         </member>
@@ -242,14 +241,13 @@
             <param name="settings">Сервис настроек</param>
             <param name="logger">Логгер, провайдер которого обеспечивается вызывающим кодом</param>
         </member>
-        <member name="M:DistanceCalc.Services.DirectLineCalculationService.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.String,System.Threading.CancellationToken)">
+        <member name="M:DistanceCalc.Services.DirectLineCalculationService.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.Threading.CancellationToken)">
             <summary>
             Рассчитывает фактическое расстояние между точками по прямой линии
             </summary>
             <remarks>Применена простая теорема Пифагора</remarks>
             <param name="A">Точка А</param>
             <param name="B">Точка Б</param>
-            <param name="logId">Идентификатор текущего запроса на расчёт для логгирования</param>
             <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
             <returns>Расстояние в километрах от точки А до точки Б</returns>
         </member>

@@ -29,6 +29,8 @@ IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new Sett
 Input input = new() { PointA = new(0, 1), PointB = new(3, 4) };
 
 // Получите результат
+using CancellationTokenSource cancellationTokenSource = new();
+CancellationToken cancellationToken = cancellationTokenSource.Token;
 Result result = await calculator.CalculateAsync(input, cancellationToken);
 
 ```
@@ -90,3 +92,10 @@ sudo journalctl -fu distanceapi.service
 - отсутствуют проверки состояния сервиса для мониторинга.
 
 Архитектурные решения и причины упрощений: $/documentation/Architecture.docx
+
+## Как искать проблемы?
+
+Логи ведутся в следующих местах:
+- в DistanceCalc - технические логи для расчёта самого расстояния; путь - $\logs\distancecalc
+- в DistanceWebApi - логи получаемых и отправялемых запросов HTTP и контекста исполнения; путь - $\logs\webapi
+
