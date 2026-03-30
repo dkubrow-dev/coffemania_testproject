@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DistanceCalc</name>
+    </assembly>
+    <members>
+        <member name="T:DistanceCalc.Abcstractions.CalculationServiceAbstraction">
+            <summary>
+            Базовый класс, предоставляющий для всех сервисов основной функционал: реализацию интерфейса IDistanceCalculationService
+            счётчик, а также обёртку для получения и выдачи данных.
+            </summary>
+            <remarks>Для дальнейших реализация будет унифицировано поведение разных реализаций с вызывающим кодом</remarks>
+        </member>
+        <member name="F:DistanceCalc.Abcstractions.CalculationServiceAbstraction._callId">
+            <summary>
+            Общий ресурс: счётчик вызовов
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Abcstractions.CalculationServiceAbstraction.CalculateAsync(DistanceCalc.Models.Input,System.Threading.CancellationToken)">
+            <summary>
+            Возвращает растояние между двумя точками по прямой линии, соединяющей их наплоскости.
+            </summary>
+            <param name="data">Входные данные</param>
+            <param name="cancellationToken">Токен отмены</param>
+            <remarks>Генерируемые исключения ложатся во внутренний объект. Не выбрасывает исключения вверх</remarks>
+            <returns>Задачу с результирующим объектом.</returns>
+        </member>
+        <member name="M:DistanceCalc.Abcstractions.CalculationServiceAbstraction.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.Threading.CancellationToken)">
+            <summary>
+            Метод фактического рассчёта расстояния для конкретной реализации.
+            </summary>
+            <remarks>ТРЕБУЕТСЯ ПЕРЕОПРЕДЕЛЕНИЕ! При вызове генерирует исключение</remarks>
+            <param name="A">Точка А</param>
+            <param name="B">Точка Б</param>
+            <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
+            <returns>Расстояние в километрах от точки А до точки Б</returns>
+            <exception cref="T:System.NotImplementedException">ВСегда требуется перегрузка - в абстракции не работает</exception>
+        </member>
+        <member name="T:DistanceCalc.Abcstractions.IDistanceCalculationService">
+            <summary>
+            Сервис, предоставляющий расчёт расстояния по входным данным
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Abcstractions.IDistanceCalculationService.CalculateAsync(DistanceCalc.Models.Input,System.Threading.CancellationToken)">
+            <summary>
+            (асинхронно) Рассчитывает расстояние между двумя точками и возвращает результат
+            </summary>
+            <param name="data">Входные данные для расчёта</param>
+            <param name="cancellationToken">Токен отмены асинхронной операции</param>
+            <returns>Задача с результатом выполнения</returns>
+        </member>
+        <member name="T:DistanceCalc.Models.CalculatorServiceModes">
+            <summary>
+            Режимы работы калькулятора: фабрика выбирает сервис выполнения запроса, исходя из этих возможных значений
+            </summary>
+        </member>
+        <member name="F:DistanceCalc.Models.CalculatorServiceModes.Undefined">
+            <summary>
+            Сервис неопределён (точно будет ошибкой)
+            </summary>
+        </member>
+        <member name="F:DistanceCalc.Models.CalculatorServiceModes.DirectLine">
+            <summary>
+            Сервис определения расстояния по прямой линии
+            </summary>
+        </member>
+        <member name="T:DistanceCalc.Models.Input">
+            <summary>
+            Структура входных данных для подсчёта расстояний
+            </summary>
+            <remarks>Служит для получения стандартизированного входа</remarks>
+        </member>
+        <member name="P:DistanceCalc.Models.Input.PointA">
+            <summary>
+            Первая точка для подсчёта расстояния
+            </summary>
+        </member>
+        <member name="P:DistanceCalc.Models.Input.PointB">
+            <summary>
+            Вторая точка для подсчёта расстояния
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Models.Input.#ctor">
+            <summary>
+            Возвращает комплект входных параметров, задавая значения по умолчанию.
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Models.Input.#ctor(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D)">
+            <summary>
+            Возвращает комплект входных параметров для расчёта расстояния по указанным точкам.
+            </summary>
+            <param name="A">Точка А</param>
+            <param name="B">Точка Б</param>
+        </member>
+        <member name="T:DistanceCalc.Models.Point2D">
+            <summary>
+            Точка двухмерного пространства для определения положения
+            </summary>
+            <remarks>Не наследуемый</remarks>
+        </member>
+        <member name="P:DistanceCalc.Models.Point2D.X">
+            <summary>
+            Координата по оси oX
+            </summary>
+        </member>
+        <member name="P:DistanceCalc.Models.Point2D.Y">
+            <summary>
+            Координата по оси oY
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Models.Point2D.#ctor(System.Double,System.Double)">
+            <summary>
+            Возвращает новую точку пространства по заданным координатам.
+            </summary>
+            <remarks>При отсутствии координат вернёт точку (0, 0)</remarks>
+            <param name="x">Абсциса</param>
+            <param name="y">Ордината</param>
+        </member>
+        <member name="M:DistanceCalc.Models.Point2D.op_Addition(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D)">
+            <summary>
+            Возвращает результат математического сложения точек (вектора)
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Models.Point2D.op_Subtraction(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D)">
+            <summary>
+            Возвращает результат математического вычитания точек (вектора)
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Models.Point2D.ToString">
+            <summary>
+            Строкове представление
+            </summary>
+            <remarks>Для удобства отладки</remarks>
+            <returns>Строка в формате "(абсциса, ордината)"</returns>
+        </member>
+        <member name="T:DistanceCalc.Models.Result">
+            <summary>
+            Структура выдачи информации на запрос
+            </summary>
+            <remarks>Позволяет вызывающему коду получить стандартизированный вывод информации</remarks>
+        </member>
+        <member name="P:DistanceCalc.Models.Result.Success">
+            <summary>
+            Флаг успешного расчёта расстояния
+            </summary>
+        </member>
+        <member name="P:DistanceCalc.Models.Result.Message">
+            <summary>
+            Сообщение (если требуется) о результате выполнения состояния
+            </summary>
+            <remarks>Для вывода ошибок и иных состояний выполнения запроса</remarks>
+        </member>
+        <member name="P:DistanceCalc.Models.Result.Exception">
+            <summary>
+            Информация о произошедшей ошибке (если произошла)
+            </summary>
+        </member>
+        <member name="P:DistanceCalc.Models.Result.Distance">
+            <summary>
+            Растояние между указанными точками
+            </summary>
+        </member>
+        <member name="T:DistanceCalc.Services.CalculatorsFactory">
+            <summary>
+            Фабрика по выбору конкретного сервиса по выполнению расчётов.
+            </summary>
+            <remarks>
+            В текущей реализации излишняя, но(!) по точно потребуется при доработке сервиса.
+            Для примера - просто по текущим настройкам из ini-файла, но потом фабрику можно сделать динамически настраиваемой
+            </remarks>
+        </member>
+        <member name="M:DistanceCalc.Services.CalculatorsFactory.GetInstance">
+            <summary>
+            По текущим настройкам выбирает нужный для работы сервис и возвращает его интерфейс
+            </summary>
+            <returns>Интерфейс взаимодействия с сервисом расчёта длины</returns>
+            <exception cref="T:System.Exception">В случае проблем с настройками не сможет выполнить поиск сервиса</exception>
+        </member>
+        <member name="T:DistanceCalc.Services.DirectLineCalculationService">
+            <summary>
+            Сервис расчёта растояния "По прямой линии"
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Services.DirectLineCalculationService.GetDistanceAsync(DistanceCalc.Models.Point2D,DistanceCalc.Models.Point2D,System.Threading.CancellationToken)">
+            <summary>
+            Рассчитывает фактическое расстояние между точками по прямой линии
+            </summary>
+            <remarks>Применена простая теорема Пифагора</remarks>
+            <param name="A">Точка А</param>
+            <param name="B">Точка Б</param>
+            <param name="cancellationToken">Токен отмены работы запроса на расчёт</param>
+            <returns>Расстояние в километрах от точки А до точки Б</returns>
+        </member>
+        <member name="T:DistanceCalc.Services.Settings">
+            <summary>
+            Настройки сервиса. 
+            </summary>
+            <remarks>
+            Сейчас крайне топорная - для реализации фабрики и будущего развития.
+            Проблема этой реализации - вшитость в код, то есть буквально уход от смысла реализации идеи "настроек".
+            Потом можно заменить на ini-файл или что-то иное типа БД, либо текущего состояния в ОЗУ, задаваемого внешними командами
+            </remarks>
+        </member>
+        <member name="F:DistanceCalc.Services.Settings.Values">
+            <summary>
+            Значения текущих настроек
+            </summary>
+        </member>
+        <member name="M:DistanceCalc.Services.Settings.GetValue(System.String)">
+            <summary>
+            Возвращает строковое значение текущей настройки. Вернёт пустую строку, если такой настройки нет.
+            </summary>
+            <param name="key">Наименование настройки / ключ словаря</param>
+            <returns>Текущее строковое значение настройки</returns>
+        </member>
+    </members>
+</doc>
