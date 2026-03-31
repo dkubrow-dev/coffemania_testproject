@@ -19,6 +19,8 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>test</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageId>DistanceCalc</PackageId>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -5,7 +5,9 @@
 
 Считает расстояние в километрах между двумя точками. На вход принимает 2 точки плоскости. Входные параметры: две точки на плоскости, заданные в double формате. Выходные данные: расстояние в double формате, либо сообщение об ошибке.
 
-Проект может быть использован двумя способами: как встраиваемая библиотека dll (nuget-пакет) для платформы .Net, и как сервис с Web API интерфейсом.
+Считается прямолинейное расстояние между точками, без поиска пути и учёта препятствий.
+
+Проект может быть использован двумя способами. 1) Подключаемая .NET-библиотека (проект подготовлен к упаковке в NuGet-пакет); 2) как сервис с Web API интерфейсом.
 
 # Как запустить?
 
@@ -28,7 +30,7 @@ IDistanceCalculationService calculator = CalculatorsFactory.GetInstance(new Sett
 // Сформируйте входящий объект
 Input input = new() { PointA = new(0, 1), PointB = new(3, 4) };
 
-// Получите результат
+// Получите 
 using CancellationTokenSource cancellationTokenSource = new();
 CancellationToken cancellationToken = cancellationTokenSource.Token;
 Result result = await calculator.CalculateAsync(input, cancellationToken);
@@ -91,11 +93,11 @@ sudo journalctl -fu distanceapi.service
 - развёртывание Web API в системе вручную, без контейнера;
 - отсутствуют проверки состояния сервиса для мониторинга.
 
-Архитектурные решения и причины упрощений: $/documentation/Architecture.docx
+Архитектурные решения и причины упрощений: /documentation/Architecture.docx
 
 ## Как искать проблемы?
 
 Логи ведутся в следующих местах:
-- в DistanceCalc - технические логи для расчёта самого расстояния; путь - $\logs\distancecalc
-- в DistanceWebApi - логи получаемых и отправялемых запросов HTTP и контекста исполнения; путь - $\logs\webapi
+- в DistanceCalc - технические логи для расчёта самого расстояния; путь - /logs/distancecalc/
+- в DistanceWebApi - логи получаемых и отправялемых запросов HTTP и контекста исполнения; путь - /logs/webapi/
 

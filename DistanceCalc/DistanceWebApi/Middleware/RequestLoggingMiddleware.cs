@@ -6,29 +6,23 @@ namespace DistanceWebApi.Middleware;
 /// Промежуточный слой для логгирования HTTP запросов-ответов через выбранный провайдер логов
 /// </summary>
 /// <remarks>Отрабатывает только HTTP слой: "запрос поступил", "запрос отдали", коды статуса запроса и время выполнения</remarks>
-public sealed class RequestLoggingMiddleware
+/// <remarks>
+/// Возвращает промежуточный слой логгирования
+/// </remarks>
+/// <param name="next">Фунция-делегат, фактически обрабатывающая HTTP запрос</param>
+/// <param name="logger">Логгер</param>
+public sealed class RequestLoggingMiddleware(RequestDelegate next,
+    ILogger<RequestLoggingMiddleware> logger)
 {
     /// <summary>
     /// Делегат фактической обработки HTTP: пляшем вокруг него
     /// </summary>
-    private readonly RequestDelegate _next;
+    private readonly RequestDelegate _next = next;
 
     /// <summary>
     /// Логгер для промежуточного слоя
     /// </summary>
-    private readonly ILogger<RequestLoggingMiddleware> _logger;
-
-    /// <summary>
-    /// Возвращает промежуточный слой логгирования
-    /// </summary>
-    /// <param name="next">Фунция-делегат, фактически обрабатывающая HTTP запрос</param>
-    /// <param name="logger">Логгер</param>
-    public RequestLoggingMiddleware(RequestDelegate next,
-        ILogger<RequestLoggingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
+    private readonly ILogger<RequestLoggingMiddleware> _logger = logger;
 
     /// <summary>
     /// Задача на фактическую запись лога поступившего запроса
@@ -36,7 +30,7 @@ public sealed class RequestLoggingMiddleware
     /// <param name="context">Контекст поступившего HTTP запроса</param>
     public async Task Invoke(HttpContext context)
     {
-        string requestId = Guid.NewGuid().ToString("N");
+        string requestId = context.TraceIdentifier;
         string method = context.Request.Method;
         string path = context.Request.Path.HasValue ? context.Request.Path.Value! : "/";
 
