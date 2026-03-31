@@ -1,6 +1,6 @@
 ﻿using DistanceCalc.Models;
 
-namespace DistanceCalc.Abcstractions;
+namespace DistanceCalc.Abstractions;
 
 /// <summary>
 /// Сервис, предоставляющий расчёт расстояния по входным данным

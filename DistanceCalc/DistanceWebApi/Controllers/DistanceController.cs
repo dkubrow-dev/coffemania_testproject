@@ -1,4 +1,4 @@
-﻿using DistanceCalc.Abcstractions;
+﻿using DistanceCalc.Abstractions;
 using DistanceCalc.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,20 +14,27 @@ public class DistanceController : ControllerBase
     /// <summary>
     /// Сервис расчётов дистанции.
     /// </summary>
-    private IDistanceCalculationService calculator;
+    private readonly IDistanceCalculationService _calculator;
+
+    /// <summary>
+    /// Логгер контроллера
+    /// </summary>
+    private readonly ILogger<DistanceController> _logger;
 
     /// <summary>
     /// Возвращает контроллер определения пути
     /// </summary>
-    /// <param name="calculator"></param>
-    public DistanceController(IDistanceCalculationService calculator)
+    /// <param name="calculator">Сервис расчётов расстояния</param>
+    /// <param name="logger">Логгер контроллера</param>
+    public DistanceController(IDistanceCalculationService calculator,
+        ILogger<DistanceController> logger)
     {
-        this.calculator = calculator;
+        _calculator = calculator;
+        _logger = logger;
     }
 
     /// <summary>
     /// Рассчитывает путь от переданных точек A и B. Возвращает расстояние в километрах.
-    /// Ожидаемое время выполнения: 1 500 миллисекунды (искуственной задержки) + само время расчёта
     /// </summary>
     /// <param name="input">Входные данные для расчёта расстояния</param>
     /// <param name="cancellationToken">Токен отмены выполнения</param>
@@ -35,22 +42,24 @@ public class DistanceController : ControllerBase
     /// Объект передачи данных о расстоянии: 
     /// Success - флаг успеха выполнения операции. 
     /// Message - сервисная информация по выполненной операции.
-    /// Extption - информация об ошибке, если та произошла
+    /// ErrorCode - код ошибки, если та произошла, либо 0, если всё в порядке.
     /// Distance - рассчитанное расстояние, если оно было посчитано.
     /// </returns>
-    [HttpPost("GetDistance")]
+    [HttpPost("Calculate")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status499ClientClosedRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Result>> GetDistanceAsync([FromBody] Input input, CancellationToken cancellationToken)
+    public async Task<ActionResult<Result>> Calculate([FromBody] Input input, CancellationToken cancellationToken)
     {
         try
         {
-            var result = await calculator.CalculateAsync(input, cancellationToken);
+            var result = await _calculator.CalculateAsync(input, cancellationToken);
             if (result.Success == false)
             {
-                if (result.Exception is TaskCanceledException)
+                if (result.ErrorCode == ErrorCodes.Canceled)
                 {
+                    _logger.LogWarning("Distance calculation canceled. ErrorCode={ErrorCode}", result.ErrorCode);
+
                     return Problem(
                         title: "Запрос отменён",
                         detail: "Операция расчёта была отменена.",
@@ -67,6 +76,8 @@ public class DistanceController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Distance controller failed.");
+
             return Problem(
                 title: "Внутренняя ошибка сервиса",
                 detail: ex.Message,

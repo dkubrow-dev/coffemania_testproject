@@ -1,11 +1,34 @@
+using DistanceCalc.Abstractions;
 using DistanceCalc.Services;
+using Microsoft.Extensions.Options;
+using DistanceWebApi.Services;
+using NLog.Web;
+using DistanceWebApi.Middleware;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-// добавим в контейнер сервис калькуляции
-//   Сейчас достаточно синглтона - он умеет рабоать в многопоточном режиме,
-//   к тому же он вызывается 1 раз на вызов контроллера: затраты на создание объекта через фабрику не окупятся
-builder.Services.AddSingleton(_ => CalculatorsFactory.GetInstance());
+// NLog будет единым провайдером на всё
+builder.Logging.ClearProviders();
+builder.Host.UseNLog(new NLogAspNetCoreOptions
+{
+    IncludeScopes = true
+});
+
+// развёртывание в Windows и Linux
+builder.Services.AddWindowsService();
+builder.Services.AddSystemd();
+
+// Читаем настройки, добавляем сервис калькулятора
+builder.Services.Configure<CalculatorSettingsProvider>(builder.Configuration.GetRequiredSection(CalculatorSettingsProvider.SectionName));
+builder.Services.AddSingleton<ISettingsProvider>(provider => provider.GetRequiredService<IOptions<CalculatorSettingsProvider>>().Value);
+builder.Services.AddSingleton<IDistanceCalculationService>(provider =>
+{
+    ISettingsProvider settings = provider.GetRequiredService<ISettingsProvider>();
+    ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+    return CalculatorsFactory.GetInstance(settings, loggerFactory);
+});
+
+// Добавляем контроллеры API
 builder.Services.AddControllers();
 
 // добавляем OpenAPI и вывод из xml summary разметки
@@ -17,7 +40,7 @@ builder.Services.AddSwaggerGen(options =>
     options.IncludeXmlComments(Path.Combine(baseDir, "xml-summary", "distanceCalc.xml"));
 });
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 // Только для отладки, в проде не показываем
 if (app.Environment.IsDevelopment())
@@ -27,6 +50,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Логирование HTTP-запросов/ответов
+app.UseMiddleware<RequestLoggingMiddleware>();
+
 app.UseAuthorization();
 
 app.MapControllers();

@@ -6,15 +6,42 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<DocumentationFile>xml-summary\distanceCalc.xml</DocumentationFile>
-		<Title>DistanceCalk</Title>
-		<Description>Калькулятор расстояния между двумя точками</Description>
+		<DocumentationFile>$(MSBuildProjectDirectory)\xml-summary\distanceCalc.xml</DocumentationFile>
+		<Title>DistanceCalc</Title>
+		<Description>Library for calculating distance between two points on a plane with configurable execution mode, cancellation support, logging integration and XML documentation.</Description>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>D.S. Cherkasov (dscherkasov@yandex.ru)</Authors>
+		<Copyright>$(Authors)</Copyright>
+		<PackageProjectUrl>https://github.com/dkubrow-dev/coffemania_testproject/releases</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>DistanceCalc.png</PackageIcon>
+		<RepositoryUrl>https://github.com/dkubrow-dev/coffemania_testproject</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>test</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageId>DistanceCalc</PackageId>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\source\DistanceCalc.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 	  <None Update="xml-summary\distanceCalc.xml">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
-
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+	</ItemGroup>
+	
 </Project>
